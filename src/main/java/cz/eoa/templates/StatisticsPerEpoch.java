@@ -15,6 +15,9 @@ public class StatisticsPerEpoch<V, T, K extends Comparable<K>> {
     protected final List<IndividualWithAssignedFitness<V, T, K>> population;
 
     public String getSummary() {
-        return "Epoch " + epoch + ", best fitness: " + bestIndividual.getFitness().toString() + ", #fitness evaluations: " + countOfFitnessEvaluations + ", execution time:" + execution;
+        return "Epoch " + epoch +
+                ", best fitness: " + bestIndividual.getFitness().toString() +
+                ", #fitness evaluations: " + countOfFitnessEvaluations +
+                ", execution time:" + execution;
     }
 }
