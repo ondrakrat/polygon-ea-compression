@@ -24,14 +24,14 @@ public class Main {
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static final int POLYGON_COUNT = 50;
     private static final int POPULATION_SIZE = 100;
-    private static final int GENERATION_COUNT = 300;
-    private static final int RENDER_FREQUENCY = 10;
+    private static final int GENERATION_COUNT = 1000;
+    private static final int RENDER_FREQUENCY = 100;
     private static final double CROSSOVER_PROBABILITY = 0.75;
     private static final float CROSSOVER_POINT = 0.9f;
-    private static final double MUTATION_RATE = 0.05;
+    private static final double MUTATION_RATE = 0.3;
     private static final double MUTATION_EXTENT = 0.05;
-    private static final float MIN_ALPHA = 0.1f;
-    private static final float MAX_ALPHA = 0.2f;
+    private static final float MIN_ALPHA = 0.2f;
+    private static final float MAX_ALPHA = 0.5f;
 
     public static void main(String[] args) throws IOException {
         if (args.length != 2) {
@@ -43,9 +43,7 @@ public class Main {
         String outputDirName = args[1];
         BufferedImage inputImage = ImageIO.read(new File(inputFileName));
 
-        PolygonsToImageDecoder polygonsToImageDecoder = new PolygonsToImageDecoder(
-                inputImage.getWidth(), inputImage.getHeight(), inputImage.getType()
-        );
+        PolygonsToImageDecoder polygonsToImageDecoder = new PolygonsToImageDecoder(inputImage);
 
         //types by order: genes, decoded genes - solution, fitness, container with statistics
         EvolutionConfiguration<List<Polygon>, BufferedImage, Double, ImageStatisticsPerEpoch> configuration =
@@ -61,7 +59,7 @@ public class Main {
                         //generational replacement strategy. keep nothing from previous population
                         .replacement(currentPopulation -> new ArrayList<>())
                         .fitnessAssessment(new ImageFitness(inputImage))
-                        .fitnessIsMaximized(false)
+                        .fitnessIsMaximized(true)
                         .parallel(true)
                         .probabilityOfCrossover(CROSSOVER_PROBABILITY)
                         .terminationCondition(epochs -> epochs.size() < GENERATION_COUNT)
@@ -103,7 +101,7 @@ public class Main {
             super(epoch, execution, countOfFitnessEvaluations, bestIndividual, population);
             this.outputDir = outputDir;
             // render partial solutions
-            if (epoch == 1 || epoch % RENDER_FREQUENCY == 0 || epoch == GENERATION_COUNT) {
+            if (epoch % RENDER_FREQUENCY == 0 || epoch == GENERATION_COUNT) {
                 Individual<List<Polygon>, BufferedImage> alphaIndividual = bestIndividual.getIndividual();
                 renderSolution(alphaIndividual.decode(decodingStrategy));
             }

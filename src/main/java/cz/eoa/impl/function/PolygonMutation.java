@@ -64,7 +64,7 @@ public class PolygonMutation implements MutationStrategy<List<Polygon>, Buffered
     private int mutateColourPart(int originalColour) {
         return RANDOM.nextInt(
                 Math.max(0, originalColour - colourMutationDelta),
-                Math.min(255, originalColour + colourMutationDelta) + 1
+                Math.min(255 + 1, originalColour + colourMutationDelta + 1)
         );
     }
 

@@ -35,10 +35,14 @@ public class EvolutionExecutor<V, T, K extends Comparable<K>, L extends Statisti
 
         //recompute fitness if tweaking is set
         if (configuration.getFitnessTweakingStrategy().isPresent()) {
-            populationWithAssignedFitness = recomputeFitnessForPopulation((configuration.isParallel() ? populationWithAssignedFitness.parallel() : populationWithAssignedFitness).collect(Collectors.toList()));
+            populationWithAssignedFitness = recomputeFitnessForPopulation((configuration.isParallel()
+                    ? populationWithAssignedFitness.parallel()
+                    : populationWithAssignedFitness).collect(Collectors.toList()));
         }
 
-        List<IndividualWithAssignedFitness<V, T, K>> currentPopulation = (configuration.isParallel() ? populationWithAssignedFitness.parallel() : populationWithAssignedFitness).collect(Collectors.toList());
+        List<IndividualWithAssignedFitness<V, T, K>> currentPopulation = (configuration.isParallel()
+                ? populationWithAssignedFitness.parallel()
+                : populationWithAssignedFitness).collect(Collectors.toList());
         epochStatistics.add(createNewStatistics(0, start, currentPopulation.size(), currentPopulation));
         logger.info(epochStatistics.get(epochStatistics.size() - 1).getSummary());
         //end init first population
@@ -53,7 +57,8 @@ public class EvolutionExecutor<V, T, K extends Comparable<K>, L extends Statisti
             List<IndividualWithAssignedFitness<V, T, K>> newIndividuals = configuration.getReplacement()
                     .getIndividualsToIncludeInNextGeneration(Collections.unmodifiableList(currentPopulation));
             if (configuration.getFitnessTweakingStrategy().isPresent()) {
-                newIndividuals = newIndividuals.stream().map(ind -> ((IndividualWithTweakedFitness<V, T, K>) ind).getOriginalIndividual())
+                newIndividuals = newIndividuals.stream()
+                        .map(ind -> ((IndividualWithTweakedFitness<V, T, K>) ind).getOriginalIndividual())
                         .collect(Collectors.toList());
             }
 

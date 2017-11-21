@@ -187,9 +187,9 @@ public final class GraphicHelper {
 
     public static double pixelDiff(int pixel1, int pixel2) {
 //        double alphaDiff = Math.abs(getAlpha(pixel1) - getAlpha(pixel2));   // TODO use alpha, or not?
-        double redDiff = Math.abs(getRed(pixel1) - getRed(pixel2));
-        double greenDiff = Math.abs(getGreen(pixel1) - getGreen(pixel2));
-        double blueDiff = Math.abs(getBlue(pixel1) - getBlue(pixel2));
-        return redDiff + greenDiff + blueDiff;
+        double redDiff = getRed(pixel1) - getRed(pixel2);
+        double greenDiff = getGreen(pixel1) - getGreen(pixel2);
+        double blueDiff = getBlue(pixel1) - getBlue(pixel2);
+        return redDiff * redDiff + greenDiff * greenDiff + blueDiff * blueDiff;
     }
 }
