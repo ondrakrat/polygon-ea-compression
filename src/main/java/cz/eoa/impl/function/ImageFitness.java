@@ -40,6 +40,7 @@ public class ImageFitness implements FitnessAssessmentStrategy<BufferedImage, Do
     public Double computeFitnessForIndividual(BufferedImage solution) {
         DataBuffer solutionDataBuffer = solution.getRaster().getDataBuffer();
         return computeFitnessFast(((DataBufferByte) solutionDataBuffer).getData());
+//        return computeFitnessSlow(solution);
     }
 
     private double computeFitnessSlow(BufferedImage solution) {

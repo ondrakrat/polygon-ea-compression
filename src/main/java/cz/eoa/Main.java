@@ -24,7 +24,7 @@ public class Main {
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static final int POLYGON_COUNT = 50;
     private static final int POPULATION_SIZE = 100;
-    private static final int GENERATION_COUNT = 1000;
+    private static final int GENERATION_COUNT = Integer.MAX_VALUE;
     private static final int RENDER_FREQUENCY = 100;
     private static final double CROSSOVER_PROBABILITY = 0.75;
     private static final float CROSSOVER_POINT = 0.9f;
@@ -88,6 +88,7 @@ public class Main {
         private static final String FORMAT = "jpeg";
         private static final String FILE_PREFIX = "generation";
         private final String outputDir;
+        private static double bestFitness = Integer.MIN_VALUE;
 
         public ImageStatisticsPerEpoch(
                 int epoch,
@@ -103,7 +104,13 @@ public class Main {
             // render partial solutions
             if (epoch % RENDER_FREQUENCY == 0 || epoch == GENERATION_COUNT) {
                 Individual<List<Polygon>, BufferedImage> alphaIndividual = bestIndividual.getIndividual();
-                renderSolution(alphaIndividual.decode(decodingStrategy));
+                String fileName = String.format("%s/%s_%d.%s", outputDir, FILE_PREFIX, epoch, FORMAT);
+                renderSolution(alphaIndividual.decode(decodingStrategy), fileName);
+            }
+            if (bestIndividual.getFitness() > bestFitness) {
+                String fileName = String.format("%s/best.%s", outputDir, FORMAT);
+                renderSolution(bestIndividual.getIndividual().decode(decodingStrategy), fileName);
+                bestFitness = bestIndividual.getFitness();
             }
         }
 
@@ -119,8 +126,7 @@ public class Main {
                     ", best fitness: " + bestIndividual.getFitness().toString();
         }
 
-        private void renderSolution(BufferedImage bufferedImage) {
-            String fileName = String.format("%s/%s_%d.%s", outputDir, FILE_PREFIX, epoch, FORMAT);
+        private void renderSolution(BufferedImage bufferedImage, String fileName) {
             try {
                 ImageIO.write(bufferedImage, FORMAT, new File(fileName));
             } catch (IOException e) {
