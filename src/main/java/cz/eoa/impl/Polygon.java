@@ -38,7 +38,13 @@ public class Polygon {
             System.arraycopy(other.points[i], 0, pointsCopy[i], 0, pointsCopy[0].length);
         }
         this.points = pointsCopy;
-        this.colour = new Color(other.colour.getRGB());
+        Color otherColour = other.colour;
+        this.colour = new Color(
+                otherColour.getRed(),
+                otherColour.getGreen(),
+                otherColour.getBlue(),
+                otherColour.getAlpha()
+        );
     }
 
     public int getNumOfVertices() {

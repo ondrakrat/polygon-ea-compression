@@ -52,7 +52,12 @@ public class PolygonMutation implements MutationStrategy<List<Polygon>, Buffered
             int blue = originalColour.getBlue();
             return new Color(mutateColourPart(red), mutateColourPart(green), mutateColourPart(blue), alpha);
         } else {
-            return new Color(originalColour.getRGB());
+            return new Color(
+                    originalColour.getRed(),
+                    originalColour.getGreen(),
+                    originalColour.getBlue(),
+                    originalColour.getAlpha()
+            );
         }
     }
 
