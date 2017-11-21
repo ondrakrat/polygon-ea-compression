@@ -23,8 +23,13 @@ public class SinglePointCrossover implements CrossoverStrategy<List<Polygon>, Bu
 
     @Override
     public List<Individual<List<Polygon>, BufferedImage>> crossover(Individual<List<Polygon>, BufferedImage> firstParent, Individual<List<Polygon>, BufferedImage> secondParent) {
-        List<Polygon> firstParentGenes = firstParent.getGenes();
-        List<Polygon> secondParentGenes = secondParent.getGenes();
+        // deep copy
+        List<Polygon> firstParentGenes = firstParent.getGenes().stream()    // TODO parallel?
+                .map(Polygon::new)
+                .collect(Collectors.toList());
+        List<Polygon> secondParentGenes = secondParent.getGenes().stream()  // TODO parallel?
+                .map(Polygon::new)
+                .collect(Collectors.toList());
         List<Polygon> childGenes1 = firstParentGenes
                 .subList(0, (int) (firstParentGenes.size() * crossoverPoint));
         childGenes1.addAll(secondParentGenes

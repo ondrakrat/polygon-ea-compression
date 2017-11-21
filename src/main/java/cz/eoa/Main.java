@@ -4,10 +4,7 @@ import cz.eoa.configuration.EvolutionConfiguration;
 import cz.eoa.configuration.EvolutionConfigurationBuilder;
 import cz.eoa.cycle.EvolutionExecutor;
 import cz.eoa.impl.Polygon;
-import cz.eoa.impl.function.PolygonsToImageDecoder;
-import cz.eoa.impl.function.PolygonPopulationInitialization;
-import cz.eoa.impl.function.SinglePointCrossover;
-import cz.eoa.impl.function.TournamentSelection;
+import cz.eoa.impl.function.*;
 import cz.eoa.templates.Individual;
 import cz.eoa.templates.IndividualWithAssignedFitness;
 import cz.eoa.templates.StatisticsPerEpoch;
@@ -23,7 +20,7 @@ import java.util.stream.Stream;
 
 public class Main {
 
-    //parameters + configuration
+    // parameters + configuration
     private static final Random RANDOM = new Random();
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static final int POLYGON_COUNT = 50;
@@ -31,6 +28,8 @@ public class Main {
     private static final int GENERATION_COUNT = 500;
     private static final double CROSSOVER_PROBABILITY = 0.75;
     private static final float CROSSOVER_POINT = 0.9f;
+    private static final double MUTATION_RATE = 0.05;
+    private static final double MUTATION_EXTENT = 0.05;
     private static final float MIN_ALPHA = 0.1f;
     private static final float MAX_ALPHA = 0.2f;
 
@@ -61,7 +60,7 @@ public class Main {
                         ))
                         .selector(new TournamentSelection<>())
                         .crossover(new SinglePointCrossover(CROSSOVER_POINT))
-                        .mutation()
+                        .mutation(new PolygonMutation(MUTATION_RATE, MUTATION_EXTENT, inputImage))
                         //generational replacement strategy. keep nothing from previous population
                         .replacement(currentPopulation -> new ArrayList<>())
                         .fitnessAssessment()
