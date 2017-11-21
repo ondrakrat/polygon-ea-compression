@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 public class Main {
 
     // parameters + configuration
-    private static final Random RANDOM = new Random();
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static final int POLYGON_COUNT = 50;
     private static final int POPULATION_SIZE = 100;
