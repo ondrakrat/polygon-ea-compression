@@ -5,6 +5,7 @@ import cz.eoa.templates.Individual;
 import cz.eoa.templates.operations.CrossoverStrategy;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,14 +31,18 @@ public class SinglePointCrossover implements CrossoverStrategy<List<Polygon>, Bu
         List<Polygon> secondParentGenes = secondParent.getGenes().stream()  // TODO parallel?
                 .map(Polygon::new)
                 .collect(Collectors.toList());
-        List<Polygon> childGenes1 = firstParentGenes
-                .subList(0, (int) (firstParentGenes.size() * crossoverPoint));
-        childGenes1.addAll(secondParentGenes
-                .subList((int) Math.ceil(secondParentGenes.size() * (1 - crossoverPoint)), secondParentGenes.size()));
-        List<Polygon> childGenes2 = secondParentGenes
-                .subList(0, (int) (secondParentGenes.size() * crossoverPoint));
-        childGenes2.addAll(firstParentGenes
-                .subList((int) Math.ceil(firstParentGenes.size() * crossoverPoint), firstParentGenes.size()));
+        List<Polygon> childGenes1 = new ArrayList<>(firstParent.getGenes().size());
+        List<Polygon> childGenes2 = new ArrayList<>(secondParent.getGenes().size());
+        int crossoverIndex = (int) (firstParentGenes.size() * crossoverPoint);
+        for (int i = 0; i < firstParent.getGenes().size(); ++i) {
+            if (i < crossoverIndex) {
+                childGenes1.add(new Polygon(firstParentGenes.get(i)));
+                childGenes2.add(new Polygon(secondParentGenes.get(i)));
+            } else {
+                childGenes1.add(new Polygon(secondParentGenes.get(i)));
+                childGenes2.add(new Polygon(firstParentGenes.get(i)));
+            }
+        }
         // TODO remove test
         checkGenes(firstParentGenes, secondParentGenes, childGenes1, childGenes2);
 
@@ -53,8 +58,9 @@ public class SinglePointCrossover implements CrossoverStrategy<List<Polygon>, Bu
         assert size == childGenes2.size()
                 && childGenes2.size() == firstParentGenes.size()
                 && firstParentGenes.size() == secondParentGenes.size();
+        int crossoverIndex = (int) (firstParentGenes.size() * crossoverPoint);
         for (int i = 0; i < firstParentGenes.size(); ++i) {
-            if (i < size) {
+            if (i < crossoverIndex) {
                 assert childGenes1.get(i).equals(firstParentGenes.get(i));
                 assert childGenes2.get(i).equals(secondParentGenes.get(i));
             } else {

@@ -3,6 +3,7 @@ package cz.eoa;
 import cz.eoa.configuration.EvolutionConfiguration;
 import cz.eoa.configuration.EvolutionConfigurationBuilder;
 import cz.eoa.cycle.EvolutionExecutor;
+import cz.eoa.impl.ImageIndividual;
 import cz.eoa.impl.Polygon;
 import cz.eoa.impl.function.*;
 import cz.eoa.templates.Individual;
@@ -14,10 +15,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class Main {
@@ -30,7 +28,7 @@ public class Main {
     private static final int RENDER_FREQUENCY = 1;
     private static final double CROSSOVER_PROBABILITY = 0.75;
     private static final float CROSSOVER_POINT = 0.9f;
-    private static final double MUTATION_RATE = 0.05;
+    private static final double MUTATION_RATE = 0;
     private static final double MUTATION_EXTENT = 0.05;
     private static final float MIN_ALPHA = 0.1f;
     private static final float MAX_ALPHA = 0.2f;
