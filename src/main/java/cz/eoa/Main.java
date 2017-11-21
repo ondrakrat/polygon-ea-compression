@@ -63,7 +63,7 @@ public class Main {
                         .mutation(new PolygonMutation(MUTATION_RATE, MUTATION_EXTENT, inputImage))
                         //generational replacement strategy. keep nothing from previous population
                         .replacement(currentPopulation -> new ArrayList<>())
-                        .fitnessAssessment()
+                        .fitnessAssessment(new ImageFitness(inputImage))
                         .fitnessIsMaximized(false)
                         .parallel(false)
                         .probabilityOfCrossover(CROSSOVER_PROBABILITY)
