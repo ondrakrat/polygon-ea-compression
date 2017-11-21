@@ -34,10 +34,14 @@ public class PolygonsToImageDecoder implements DecodingStrategy<List<Polygon>, B
         Graphics2D graphics = bufferedImage.createGraphics();
 
         for (Polygon gene : genes) {
-            java.awt.Polygon polygon = new java.awt.Polygon();
-            for (int[] coords : gene.getPoints()) {
-                polygon.addPoint(coords[0], coords[1]);
+            int[][] points = gene.getPoints();
+            int[] xPoints = new int[points.length];
+            int[] yPoints = new int[points.length];
+            for (int i = 0; i < points.length; ++i) {
+                xPoints[i] = points[i][0];
+                yPoints[i] = points[i][1];
             }
+            java.awt.Polygon polygon = new java.awt.Polygon(xPoints, yPoints, 3);
             graphics.setColor(gene.getColour());
             graphics.fillPolygon(polygon);
         }

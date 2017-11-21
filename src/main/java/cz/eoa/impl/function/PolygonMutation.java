@@ -81,6 +81,8 @@ public class PolygonMutation implements MutationStrategy<List<Polygon>, Buffered
                         Math.min(inputImage.getHeight(), originalPoint[1] + yMutationDelta)
                 );
                 mutatedPoints[i] = new int[]{xCoord, yCoord};
+            } else {
+                mutatedPoints[i] = new int[]{originalPoint[0], originalPoint[1]};
             }
         }
         return mutatedPoints;
