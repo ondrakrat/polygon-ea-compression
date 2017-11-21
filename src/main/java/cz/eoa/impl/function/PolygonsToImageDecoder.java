@@ -22,6 +22,12 @@ public class PolygonsToImageDecoder implements DecodingStrategy<List<Polygon>, B
         this.type = type;
     }
 
+    public PolygonsToImageDecoder(BufferedImage inputImage) {
+        this.width = inputImage.getWidth();
+        this.height = inputImage.getHeight();
+        this.type = inputImage.getType();
+    }
+
     @Override
     public BufferedImage decode(List<Polygon> genes) {
         BufferedImage bufferedImage = new BufferedImage(width, height, type);

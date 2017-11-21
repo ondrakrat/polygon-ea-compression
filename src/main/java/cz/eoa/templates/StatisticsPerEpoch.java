@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class StatisticsPerEpoch<V, T, K extends Comparable<K>> {
+
     protected final int epoch;
     protected final long execution;
     protected final int countOfFitnessEvaluations;
