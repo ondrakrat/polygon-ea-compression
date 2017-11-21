@@ -73,33 +73,52 @@ public class EvolutionExecutor<V, T, K extends Comparable<K>, L extends Statisti
                         });
                 Stream<IndividualWithFitnessAssessmentStatus> newBatchOfIndividualsStream = streamOfParentsPairs.flatMap(parents -> {
                     if (configuration.getCrossover().isPresent() && RANDOM.nextDouble() <= configuration.getProbabilityOfCrossover()) {
-                        Stream<Individual<V, T>> offspring = configuration.getCrossover().get().crossover(parents.get(0).getIndividual(), parents.get(1).getIndividual()).stream();
+                        Stream<Individual<V, T>> offspring = configuration.getCrossover().get()
+                                .crossover(parents.get(0).getIndividual(), parents.get(1).getIndividual())
+                                .stream();
                         if (configuration.getMutation().isPresent()) {
                             offspring = offspring
                                     .map(individual -> configuration.getMutation().get().mutation(individual))
                                     .filter(Optional::isPresent)
                                     .map(Optional::get);
                         }
-                        return assignFitnessToIndividuals(offspring).map(ind -> new IndividualWithFitnessAssessmentStatus(ind, true));
+                        return assignFitnessToIndividuals(offspring)
+                                .map(ind -> new IndividualWithFitnessAssessmentStatus(ind, true));
                     } else {
                         if (configuration.getMutation().isPresent()) {
                             return parents.stream()
                                     .map(individual -> {
-                                        Optional<Individual<V, T>> mutated = configuration.getMutation().get().mutation(individual.getIndividual());
+                                        Optional<Individual<V, T>> mutated = configuration.getMutation().get()
+                                                .mutation(individual.getIndividual());
                                         if (mutated.isPresent() && !mutated.get().equals(individual.getIndividual())) {
-                                            return new IndividualWithFitnessAssessmentStatus(new IndividualWithAssignedFitness<>(mutated.get(),
-                                                    configuration.getFitnessAssessment().computeFitnessForIndividual(mutated.get().decode(configuration.getDecoding()))), true);
+                                            return new IndividualWithFitnessAssessmentStatus(
+                                                    new IndividualWithAssignedFitness<>(
+                                                            mutated.get(),
+                                                            configuration.getFitnessAssessment()
+                                                                    .computeFitnessForIndividual(mutated.get()
+                                                                            .decode(configuration.getDecoding()))
+                                                    ), true
+                                            );
                                         }
                                         return new IndividualWithFitnessAssessmentStatus(individual, false);
                                     });
                         } else {
-                            return parents.stream().map(ind -> new IndividualWithFitnessAssessmentStatus(ind, false));
+                            return parents.stream()
+                                    .map(ind -> new IndividualWithFitnessAssessmentStatus(ind, false));
                         }
                     }
                 });
-                List<IndividualWithFitnessAssessmentStatus> newBatchOfIndividuals = (configuration.isParallel() ? newBatchOfIndividualsStream.parallel() : newBatchOfIndividualsStream).collect(Collectors.toList());
-                fitnessEvaluations = fitnessEvaluations + (int) newBatchOfIndividuals.stream().filter(IndividualWithFitnessAssessmentStatus::isFitnessRecomputed).count();
-                newIndividuals.addAll(newBatchOfIndividuals.stream().map(IndividualWithFitnessAssessmentStatus::getIndividual).collect(Collectors.toList()));
+                List<IndividualWithFitnessAssessmentStatus> newBatchOfIndividuals = (configuration.isParallel()
+                        ? newBatchOfIndividualsStream.parallel()
+                        : newBatchOfIndividualsStream).collect(Collectors.toList()
+                );
+                fitnessEvaluations = fitnessEvaluations + (int) newBatchOfIndividuals.stream()
+                        .filter(IndividualWithFitnessAssessmentStatus::isFitnessRecomputed)
+                        .count();
+                newIndividuals.addAll(newBatchOfIndividuals.stream()
+                        .map(IndividualWithFitnessAssessmentStatus::getIndividual)
+                        .collect(Collectors.toList())
+                );
             }
 
             //recompute fitness if tweaking is set
@@ -136,18 +155,27 @@ public class EvolutionExecutor<V, T, K extends Comparable<K>, L extends Statisti
 
     private L createNewStatistics(int epoch, long startTime, int countOfFitnessEvaluation, List<IndividualWithAssignedFitness<V, T, K>> currentPopulation) {
         return configuration.getStatisticsCreation().returnStatistics(epoch, System.currentTimeMillis() - startTime,
-                countOfFitnessEvaluation, (configuration.isFitnessIsMaximized() ? currentPopulation.stream().max(Comparator.comparing(ind -> ind)) :
-                        currentPopulation.stream().min(Comparator.comparing(ind -> ind))).get(), Collections.unmodifiableList(currentPopulation));
+                countOfFitnessEvaluation, (configuration.isFitnessIsMaximized()
+                        ? currentPopulation.stream().max(Comparator.comparing(ind -> ind))
+                        : currentPopulation.stream().min(Comparator.comparing(ind -> ind))).get(),
+                Collections.unmodifiableList(currentPopulation));
     }
 
     private Stream<IndividualWithAssignedFitness<V, T, K>> assignFitnessToIndividuals(Stream<Individual<V, T>> individualsStream) {
-        return individualsStream.map(vIndividual -> new IndividualWithAssignedFitness<>(vIndividual, configuration.getFitnessAssessment().computeFitnessForIndividual(vIndividual.decode(configuration.getDecoding()))));
+        return individualsStream
+                .map(vIndividual -> new IndividualWithAssignedFitness<>(
+                        vIndividual,
+                        configuration.getFitnessAssessment()
+                                .computeFitnessForIndividual(vIndividual.decode(configuration.getDecoding())))
+                );
     }
 
     private Stream<IndividualWithAssignedFitness<V, T, K>> recomputeFitnessForPopulation(List<IndividualWithAssignedFitness<V, T, K>> population) {
         if (configuration.getFitnessTweakingStrategy().isPresent()) {
-            IndividualFitnessUpdater<V, T, K> updater = configuration.getFitnessTweakingStrategy().get().getIndividualUpdater(Collections.unmodifiableList(population));
-            return IntStream.range(0, population.size()).boxed()
+            IndividualFitnessUpdater<V, T, K> updater = configuration.getFitnessTweakingStrategy().get()
+                    .getIndividualUpdater(Collections.unmodifiableList(population));
+            return IntStream.range(0, population.size())
+                    .boxed()
                     .map(integer -> population.get(integer).updateFitness(integer, population, updater));
         }
         return population.stream();

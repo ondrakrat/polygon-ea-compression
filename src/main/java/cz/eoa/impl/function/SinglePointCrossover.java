@@ -43,8 +43,7 @@ public class SinglePointCrossover implements CrossoverStrategy<List<Polygon>, Bu
                 childGenes2.add(new Polygon(firstParentGenes.get(i)));
             }
         }
-        // TODO remove test
-        checkGenes(firstParentGenes, secondParentGenes, childGenes1, childGenes2);
+//        checkGenes(firstParentGenes, secondParentGenes, childGenes1, childGenes2);
 
         return Stream.of(
                 new Individual<List<Polygon>, BufferedImage>(childGenes1),

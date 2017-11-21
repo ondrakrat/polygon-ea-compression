@@ -24,11 +24,11 @@ public class Main {
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static final int POLYGON_COUNT = 50;
     private static final int POPULATION_SIZE = 100;
-    private static final int GENERATION_COUNT = 10;
-    private static final int RENDER_FREQUENCY = 1;
+    private static final int GENERATION_COUNT = 300;
+    private static final int RENDER_FREQUENCY = 10;
     private static final double CROSSOVER_PROBABILITY = 0.75;
     private static final float CROSSOVER_POINT = 0.9f;
-    private static final double MUTATION_RATE = 0;
+    private static final double MUTATION_RATE = 0.05;
     private static final double MUTATION_EXTENT = 0.05;
     private static final float MIN_ALPHA = 0.1f;
     private static final float MAX_ALPHA = 0.2f;
@@ -62,7 +62,7 @@ public class Main {
                         .replacement(currentPopulation -> new ArrayList<>())
                         .fitnessAssessment(new ImageFitness(inputImage))
                         .fitnessIsMaximized(false)
-                        .parallel(false)
+                        .parallel(true)
                         .probabilityOfCrossover(CROSSOVER_PROBABILITY)
                         .terminationCondition(epochs -> epochs.size() < GENERATION_COUNT)
                         .statisticsCreation(
@@ -82,7 +82,7 @@ public class Main {
         ImageStatisticsPerEpoch bestEpoch = statistics.stream()
                 .max(Comparator.comparing(stats -> stats.getBestIndividual().getFitness()))
                 .orElseThrow(() -> new IllegalArgumentException("Empty stream of epochs"));
-        LOG.info("Executed in " + time + ", best solution in epoch " + bestEpoch.getEpoch());
+        LOG.info("Executed in " + time + " ms, best solution in epoch " + bestEpoch.getEpoch());
     }
 
     private static class ImageStatisticsPerEpoch extends StatisticsPerEpoch<List<Polygon>, BufferedImage, Double> {
@@ -117,7 +117,7 @@ public class Main {
                     .average()
                     .orElse(0) +
                     ", #fitness evaluations: " + countOfFitnessEvaluations +
-                    ", execution time:" + execution +
+                    ", execution time:" + execution + " ms" +
                     ", best fitness: " + bestIndividual.getFitness().toString();
         }
 
