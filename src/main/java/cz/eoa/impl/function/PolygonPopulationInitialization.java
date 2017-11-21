@@ -39,7 +39,7 @@ public class PolygonPopulationInitialization implements PopulationInitialization
             // generate triangles
             int[][] vertices = new int[3][];
             for (int j = 0; j < vertices.length; ++j) {
-                vertices[i] = new int[]{RANDOM.nextInt(inputImage.getWidth()), RANDOM.nextInt(inputImage.getHeight())};
+                vertices[j] = new int[]{RANDOM.nextInt(inputImage.getWidth()), RANDOM.nextInt(inputImage.getHeight())};
             }
             Polygon polygon = new Polygon(
                     vertices,

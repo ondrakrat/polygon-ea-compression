@@ -26,8 +26,8 @@ public class Main {
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static final int POLYGON_COUNT = 50;
     private static final int POPULATION_SIZE = 100;
-    private static final int GENERATION_COUNT = 1000;
-    private static final int RENDER_FREQUENCY = 100;
+    private static final int GENERATION_COUNT = 10;
+    private static final int RENDER_FREQUENCY = 1;
     private static final double CROSSOVER_PROBABILITY = 0.75;
     private static final float CROSSOVER_POINT = 0.9f;
     private static final double MUTATION_RATE = 0.05;
