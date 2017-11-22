@@ -28,7 +28,7 @@ public class Main {
     private static final int RENDER_FREQUENCY = 100;
     private static final double CROSSOVER_PROBABILITY = 0.75;
     private static final float CROSSOVER_POINT = 0.9f;
-    private static final double MUTATION_RATE = 0.3;
+    private static final double MUTATION_RATE = 0.05;
     private static final double MUTATION_EXTENT = 0.05;
     private static final float MIN_ALPHA = 0.2f;
     private static final float MAX_ALPHA = 0.5f;
@@ -55,7 +55,7 @@ public class Main {
                         .decoding(polygonsToImageDecoder)
                         .selector(new TournamentSelection<>())
                         .crossover(new SinglePointCrossover(CROSSOVER_POINT))
-                        .mutation(new PolygonMutation(MUTATION_RATE, MUTATION_EXTENT, inputImage))
+                        .mutation(new PolygonReplacementMutation(MUTATION_RATE, MIN_ALPHA, MAX_ALPHA, inputImage))
                         //generational replacement strategy. keep nothing from previous population
                         .replacement(currentPopulation -> new ArrayList<>())
                         .fitnessAssessment(new ImageFitness(inputImage))

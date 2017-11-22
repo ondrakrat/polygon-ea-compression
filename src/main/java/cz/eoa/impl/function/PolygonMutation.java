@@ -79,11 +79,11 @@ public class PolygonMutation implements MutationStrategy<List<Polygon>, Buffered
             if (RANDOM.nextDouble() < mutationRate) {
                 int xCoord = RANDOM.nextInt(
                         Math.max(0, originalPoint[0] - xMutationDelta),
-                        Math.min(inputImage.getWidth(), originalPoint[0] + xMutationDelta)
+                        Math.min(inputImage.getWidth(), originalPoint[0] + xMutationDelta + 1)
                 );
                 int yCoord = RANDOM.nextInt(
                         Math.max(0, originalPoint[1] - yMutationDelta),
-                        Math.min(inputImage.getHeight(), originalPoint[1] + yMutationDelta)
+                        Math.min(inputImage.getHeight(), originalPoint[1] + yMutationDelta + 1)
                 );
                 mutatedPoints[i] = new int[]{xCoord, yCoord};
             } else {
