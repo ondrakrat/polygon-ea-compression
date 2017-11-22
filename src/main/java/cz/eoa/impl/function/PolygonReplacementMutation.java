@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class PolygonReplacementMutation implements MutationStrategy<List<Polygon>, BufferedImage> {
 
     private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
+    private static final double SEED_DISTANCE = 0.05;
     private final double mutationRate;
     private final BufferedImage inputImage;
     private final float minAlpha;
@@ -41,9 +42,20 @@ public class PolygonReplacementMutation implements MutationStrategy<List<Polygon
                         int[][] originalPoints = polygon.getPoints();
                         int[][] points = new int[originalPoints.length][originalPoints[0].length];
                         for (int j = 0; j < points.length; ++j) {
-                            points[j] = new int[]{
+                            // generate small polygons so they would survive in later stages of the algorithm
+                            int[] seed = {
                                     RANDOM.nextInt(inputImage.getWidth()),
                                     RANDOM.nextInt(inputImage.getHeight())
+                            };
+                            points[j] = new int[]{
+                                    RANDOM.nextInt(
+                                            Math.max(0, seed[0] - (int) (inputImage.getWidth() * SEED_DISTANCE)),
+                                            Math.min(inputImage.getWidth(), seed[0] + (int) (inputImage.getWidth() * SEED_DISTANCE))
+                                    ),
+                                    RANDOM.nextInt(
+                                            Math.max(0, seed[1] - (int) (inputImage.getHeight() * SEED_DISTANCE)),
+                                            Math.min(inputImage.getHeight(), seed[1] + (int) (inputImage.getHeight() * SEED_DISTANCE))
+                                    )
                             };
                         }
 

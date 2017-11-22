@@ -21,13 +21,16 @@ public class PolygonDeltaMutation implements MutationStrategy<List<Polygon>, Buf
     private final BufferedImage inputImage;
     private final double mutationRate;
     private final int colourMutationDelta;
-    private final double mutationExtent;
+    private final double mutationExtentVertex;
 
-    public PolygonDeltaMutation(double mutationRate, double mutationExtent, BufferedImage inputImage) {
+    public PolygonDeltaMutation(double mutationRate,
+                                double mutationExtentVertex,
+                                double mutationExtentColour,
+                                BufferedImage inputImage) {
         assert mutationRate >= 0 && mutationRate <= 1;
         this.mutationRate = mutationRate;
-        this.mutationExtent = mutationExtent;
-        this.colourMutationDelta = (int) (255 * mutationExtent);
+        this.mutationExtentVertex = mutationExtentVertex;
+        this.colourMutationDelta = (int) (255 * mutationExtentColour);
         this.inputImage = inputImage;
     }
 
@@ -69,13 +72,13 @@ public class PolygonDeltaMutation implements MutationStrategy<List<Polygon>, Buf
     }
 
     private int[][] mutatePoints(int[][] originalPoints) {
-        int xMutationDelta = (int) (inputImage.getWidth() * mutationExtent);
-        int yMutationDelta = (int) (inputImage.getHeight() * mutationExtent);
+        int xMutationDelta = (int) (inputImage.getWidth() * mutationExtentVertex);
+        int yMutationDelta = (int) (inputImage.getHeight() * mutationExtentVertex);
         int[][] mutatedPoints = new int[originalPoints.length][originalPoints[0].length];
 
         for (int i = 0; i < mutatedPoints.length; ++i) {
             int[] originalPoint = originalPoints[i];
-            // TODO mutate all points, or only random? Can be weighted out by adjusting mutationExtent/rate
+            // TODO mutate all points, or only random? Can be weighted out by adjusting mutationExtentVertex/rate
             if (RANDOM.nextDouble() < mutationRate) {
                 int xCoord = RANDOM.nextInt(
                         Math.max(0, originalPoint[0] - xMutationDelta),

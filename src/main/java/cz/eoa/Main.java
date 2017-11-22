@@ -21,18 +21,19 @@ public class Main {
 
     // parameters + configuration
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
-    private static final int POLYGON_COUNT = 50;
+    private static final int POLYGON_COUNT = 100;
     private static final int POLYGON_EDGES = 5;
     private static final int POPULATION_SIZE = 50;
     private static final int GENERATION_COUNT = Integer.MAX_VALUE;
     private static final int RENDER_FREQUENCY = 100;
-    private static final double CROSSOVER_PROBABILITY = 0.75;
+    private static final double CROSSOVER_PROBABILITY = 0.9;
     private static final float CROSSOVER_POINT = 0.9f;
-    private static final double MUTATION_RATE = 0.1;
-    private static final double MUTATION_EXTENT = 0.3;
+    private static final double MUTATION_RATE = 0.05;
+    private static final double MUTATION_EXTENT_VERTEX = 0.1;
+    private static final double MUTATION_EXTENT_COLOUR = 0.1;
     private static final int ELITISM_COUNT = (int) Math.round(POPULATION_SIZE * 0.02);
-    private static final float MIN_ALPHA = 0.2f;
-    private static final float MAX_ALPHA = 0.5f;
+    private static final float MIN_ALPHA = 0.125f;
+    private static final float MAX_ALPHA = 0.25f;
 
     public static void main(String[] args) throws IOException {
         if (args.length != 2) {
@@ -45,6 +46,7 @@ public class Main {
         BufferedImage inputImage = ImageIO.read(new File(inputFileName));
 
         PolygonsToImageDecoder polygonsToImageDecoder = new PolygonsToImageDecoder(inputImage);
+        ImageFitness imageFitness = new ImageFitness(inputImage);
 
         //types by order: genes, decoded genes - solution, fitness, container with statistics
         EvolutionConfiguration<List<Polygon>, BufferedImage, Double, ImageStatisticsPerEpoch> configuration =
@@ -60,12 +62,31 @@ public class Main {
                         .decoding(polygonsToImageDecoder)
                         .selector(new TournamentSelection<>(3))
 //                        .crossover(new SinglePointCrossover(CROSSOVER_POINT))
-                        .crossover(new UniformCrossover(0.5))
+//                        .crossover(new UniformCrossover(0.5))
+                        .crossover(new AlphaChildCrossover(
+                                imageFitness,
+                                polygonsToImageDecoder,
+                                new UniformCrossover(0.5),
+                                20)
+                        )
 //                        .mutation(new PolygonReplacementMutation(MUTATION_RATE, MIN_ALPHA, MAX_ALPHA, inputImage))
-                        .mutation(new PolygonDeltaMutation(MUTATION_RATE, MUTATION_EXTENT, inputImage))
-//                        .replacement(currentPopulation -> new ArrayList<>())
-                        .replacement(new Elitism<>(ELITISM_COUNT, true))
-                        .fitnessAssessment(new ImageFitness(inputImage))
+//                        .mutation(new PolygonDeltaMutation(MUTATION_RATE, MUTATION_EXTENT_VERTEX, inputImage))
+                        .mutation(individual -> {
+                            PolygonDeltaMutation deltaMutation = new PolygonDeltaMutation(
+                                    MUTATION_RATE, MUTATION_EXTENT_VERTEX, MUTATION_EXTENT_COLOUR, inputImage
+                            );
+                            PolygonReplacementMutation replacementMutation = new PolygonReplacementMutation(
+                                    MUTATION_RATE, MIN_ALPHA, MAX_ALPHA, inputImage
+                            );
+                            Optional<Individual<List<Polygon>, BufferedImage>> individual1 =
+                                    deltaMutation.mutation(individual);
+                            return replacementMutation.mutation(individual1.orElseThrow(
+                                    () -> new IllegalArgumentException("No individual returned from previous mutation")
+                            ));
+                        })
+                        .replacement(currentPopulation -> new ArrayList<>())
+//                        .replacement(new Elitism<>(ELITISM_COUNT, true))
+                        .fitnessAssessment(imageFitness)
                         .fitnessIsMaximized(true)
                         .parallel(true)
                         .probabilityOfCrossover(CROSSOVER_PROBABILITY)
