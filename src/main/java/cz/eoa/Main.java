@@ -28,7 +28,7 @@ public class Main {
     private static final int RENDER_FREQUENCY = 100;
     private static final double CROSSOVER_PROBABILITY = 0.75;
     private static final float CROSSOVER_POINT = 0.9f;
-    private static final double MUTATION_RATE = 0.05;
+    private static final double MUTATION_RATE = 0.1;
     private static final double MUTATION_EXTENT = 0.3;
     private static final int ELITISM_COUNT = (int) Math.round(POPULATION_SIZE * 0.02);
     private static final float MIN_ALPHA = 0.2f;
@@ -58,7 +58,7 @@ public class Main {
                                 MAX_ALPHA)
                         )
                         .decoding(polygonsToImageDecoder)
-                        .selector(new TournamentSelection<>())
+                        .selector(new TournamentSelection<>(3))
 //                        .crossover(new SinglePointCrossover(CROSSOVER_POINT))
                         .crossover(new UniformCrossover(0.5))
 //                        .mutation(new PolygonReplacementMutation(MUTATION_RATE, MIN_ALPHA, MAX_ALPHA, inputImage))
