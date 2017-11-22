@@ -21,12 +21,14 @@ public class PolygonPopulationInitialization implements PopulationInitialization
     private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
     private final BufferedImage inputImage;
     private final int polygonCount;
+    private final int polygonEdges;
     private final float minAlpha;
     private final float maxAlpha;
 
-    public PolygonPopulationInitialization(BufferedImage inputImage, int polygonCount, float minAlpha, float maxAlpha) {
+    public PolygonPopulationInitialization(BufferedImage inputImage, int polygonCount, int polygonEdges, float minAlpha, float maxAlpha) {
         this.inputImage = inputImage;
         this.polygonCount = polygonCount;
+        this.polygonEdges = polygonEdges;
         this.minAlpha = minAlpha;
         this.maxAlpha = maxAlpha;
     }
@@ -37,7 +39,7 @@ public class PolygonPopulationInitialization implements PopulationInitialization
         float alpha = RANDOM.nextFloat() * (maxAlpha - minAlpha) + minAlpha;
         for (int i = 0; i < polygonCount; ++i) {
             // generate triangles
-            int[][] vertices = new int[3][];
+            int[][] vertices = new int[polygonEdges][];
             for (int j = 0; j < vertices.length; ++j) {
                 vertices[j] = new int[]{RANDOM.nextInt(inputImage.getWidth()), RANDOM.nextInt(inputImage.getHeight())};
             }

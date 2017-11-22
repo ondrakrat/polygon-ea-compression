@@ -41,7 +41,7 @@ public class PolygonsToImageDecoder implements DecodingStrategy<List<Polygon>, B
                 xPoints[i] = points[i][0];
                 yPoints[i] = points[i][1];
             }
-            java.awt.Polygon polygon = new java.awt.Polygon(xPoints, yPoints, 3);
+            java.awt.Polygon polygon = new java.awt.Polygon(xPoints, yPoints, points.length);
             graphics.setColor(gene.getColour());
             graphics.fillPolygon(polygon);
         }

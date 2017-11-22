@@ -22,6 +22,7 @@ public class Main {
     // parameters + configuration
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static final int POLYGON_COUNT = 50;
+    private static final int POLYGON_EDGES = 5;
     private static final int POPULATION_SIZE = 100;
     private static final int GENERATION_COUNT = Integer.MAX_VALUE;
     private static final int RENDER_FREQUENCY = 100;
@@ -49,8 +50,12 @@ public class Main {
         EvolutionConfiguration<List<Polygon>, BufferedImage, Double, ImageStatisticsPerEpoch> configuration =
                 new EvolutionConfigurationBuilder<List<Polygon>, BufferedImage, Double, ImageStatisticsPerEpoch>()
                         .populationSize(POPULATION_SIZE)
-                        .populationInitialization(
-                                new PolygonPopulationInitialization(inputImage, POLYGON_COUNT, MIN_ALPHA, MAX_ALPHA)
+                        .populationInitialization(new PolygonPopulationInitialization(
+                                inputImage,
+                                POLYGON_COUNT,
+                                POLYGON_EDGES,
+                                MIN_ALPHA,
+                                MAX_ALPHA)
                         )
                         .decoding(polygonsToImageDecoder)
                         .selector(new TournamentSelection<>())
