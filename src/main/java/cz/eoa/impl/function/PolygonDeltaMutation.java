@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * @author Ondřej Kratochvíl
  */
-public class PolygonMutation implements MutationStrategy<List<Polygon>, BufferedImage> {
+public class PolygonDeltaMutation implements MutationStrategy<List<Polygon>, BufferedImage> {
 
     private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
     private final BufferedImage inputImage;
@@ -23,7 +23,7 @@ public class PolygonMutation implements MutationStrategy<List<Polygon>, Buffered
     private final int colourMutationDelta;
     private final double mutationExtent;
 
-    public PolygonMutation(double mutationRate, double mutationExtent, BufferedImage inputImage) {
+    public PolygonDeltaMutation(double mutationRate, double mutationExtent, BufferedImage inputImage) {
         assert mutationRate >= 0 && mutationRate <= 1;
         this.mutationRate = mutationRate;
         this.mutationExtent = mutationExtent;

@@ -3,7 +3,6 @@ package cz.eoa;
 import cz.eoa.configuration.EvolutionConfiguration;
 import cz.eoa.configuration.EvolutionConfigurationBuilder;
 import cz.eoa.cycle.EvolutionExecutor;
-import cz.eoa.impl.ImageIndividual;
 import cz.eoa.impl.Polygon;
 import cz.eoa.impl.function.*;
 import cz.eoa.templates.Individual;
@@ -30,6 +29,7 @@ public class Main {
     private static final float CROSSOVER_POINT = 0.9f;
     private static final double MUTATION_RATE = 0.05;
     private static final double MUTATION_EXTENT = 0.05;
+    private static final int ELITISM_COUNT = (int) Math.round(POPULATION_SIZE * 0.02);
     private static final float MIN_ALPHA = 0.2f;
     private static final float MAX_ALPHA = 0.5f;
 
@@ -55,9 +55,10 @@ public class Main {
                         .decoding(polygonsToImageDecoder)
                         .selector(new TournamentSelection<>())
                         .crossover(new SinglePointCrossover(CROSSOVER_POINT))
-                        .mutation(new PolygonReplacementMutation(MUTATION_RATE, MIN_ALPHA, MAX_ALPHA, inputImage))
-                        //generational replacement strategy. keep nothing from previous population
-                        .replacement(currentPopulation -> new ArrayList<>())
+//                        .mutation(new PolygonReplacementMutation(MUTATION_RATE, MIN_ALPHA, MAX_ALPHA, inputImage))
+                        .mutation(new PolygonDeltaMutation(MUTATION_RATE, MUTATION_EXTENT, inputImage))
+//                        .replacement(currentPopulation -> new ArrayList<>())
+                        .replacement(new Elitism<>(ELITISM_COUNT, true))
                         .fitnessAssessment(new ImageFitness(inputImage))
                         .fitnessIsMaximized(true)
                         .parallel(true)
