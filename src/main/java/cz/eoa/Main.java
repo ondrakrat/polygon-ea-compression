@@ -23,13 +23,13 @@ public class Main {
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static final int POLYGON_COUNT = 50;
     private static final int POLYGON_EDGES = 5;
-    private static final int POPULATION_SIZE = 100;
+    private static final int POPULATION_SIZE = 50;
     private static final int GENERATION_COUNT = Integer.MAX_VALUE;
     private static final int RENDER_FREQUENCY = 100;
     private static final double CROSSOVER_PROBABILITY = 0.75;
     private static final float CROSSOVER_POINT = 0.9f;
     private static final double MUTATION_RATE = 0.05;
-    private static final double MUTATION_EXTENT = 0.05;
+    private static final double MUTATION_EXTENT = 0.3;
     private static final int ELITISM_COUNT = (int) Math.round(POPULATION_SIZE * 0.02);
     private static final float MIN_ALPHA = 0.2f;
     private static final float MAX_ALPHA = 0.5f;
@@ -59,7 +59,8 @@ public class Main {
                         )
                         .decoding(polygonsToImageDecoder)
                         .selector(new TournamentSelection<>())
-                        .crossover(new SinglePointCrossover(CROSSOVER_POINT))
+//                        .crossover(new SinglePointCrossover(CROSSOVER_POINT))
+                        .crossover(new UniformCrossover(0.5))
 //                        .mutation(new PolygonReplacementMutation(MUTATION_RATE, MIN_ALPHA, MAX_ALPHA, inputImage))
                         .mutation(new PolygonDeltaMutation(MUTATION_RATE, MUTATION_EXTENT, inputImage))
 //                        .replacement(currentPopulation -> new ArrayList<>())
