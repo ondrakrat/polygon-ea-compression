@@ -26,7 +26,7 @@ public class ImageFitness implements FitnessAssessmentStrategy<BufferedImage, Do
     public ImageFitness(BufferedImage inputImage) {
         this.inputImage = inputImage;
         this.pixels = ((DataBufferByte) inputImage.getRaster().getDataBuffer()).getData();
-        this.hasAlpha =  inputImage.getAlphaRaster() != null;
+        this.hasAlpha = inputImage.getAlphaRaster() != null;
         this.pixelLength = hasAlpha ? 4 : 3;
 
         alphaArray = new short[inputImage.getWidth()][inputImage.getHeight()];
@@ -64,6 +64,39 @@ public class ImageFitness implements FitnessAssessmentStrategy<BufferedImage, Do
             }
         }
         return fitness * -1;
+    }
+
+    public int[] getWorstSegment(BufferedImage solution) {
+        DataBuffer solutionDataBuffer = solution.getRaster().getDataBuffer();
+        byte[] solutionData = ((DataBufferByte) solutionDataBuffer).getData();
+        int factor = 10;
+        double[][] segmentMatrix =
+                new double[(inputImage.getHeight() / factor) + 1][(inputImage.getWidth() / factor) + 1];
+
+        for (int i = 0; i < inputImage.getWidth(); ++i) {
+            for (int j = 0; j < inputImage.getHeight(); ++j) {
+                segmentMatrix[j / factor][i / factor] += pixelDiffFast(i, j, solutionData);
+            }
+        }
+
+        double worstFitness = Double.MIN_VALUE;
+        int worstI = -1;
+        int worstJ = -1;
+        for (int i = 0; i < segmentMatrix.length; ++i) {
+            for (int j = 0; j < segmentMatrix[0].length; ++j) {
+                if (segmentMatrix[i][j] > worstFitness) {
+                    worstFitness = segmentMatrix[i][j];
+                    worstI = i;
+                    worstJ = j;
+                }
+            }
+        }
+        return new int[]{
+                worstI * inputImage.getHeight() / factor,
+                worstJ * inputImage.getWidth() / factor,
+                inputImage.getHeight() / factor,    // TODO does not work precisely for last segment
+                inputImage.getWidth() / factor
+        };
     }
 
     private int getRgbFast(int x, int y, byte[] data) {

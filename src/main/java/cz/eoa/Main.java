@@ -22,7 +22,7 @@ public class Main {
     // parameters + configuration
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static final int POLYGON_COUNT = 100;
-    private static final int POLYGON_EDGES = 5;
+    private static final int POLYGON_VERTICES = 5;
     private static final int POPULATION_SIZE = 50;
     private static final int GENERATION_COUNT = Integer.MAX_VALUE;
     private static final int RENDER_FREQUENCY = 100;
@@ -55,7 +55,7 @@ public class Main {
                         .populationInitialization(new PolygonPopulationInitialization(
                                 inputImage,
                                 POLYGON_COUNT,
-                                POLYGON_EDGES,
+                                POLYGON_VERTICES,
                                 MIN_ALPHA,
                                 MAX_ALPHA)
                         )
@@ -75,9 +75,12 @@ public class Main {
                             PolygonDeltaMutation deltaMutation = new PolygonDeltaMutation(
                                     MUTATION_RATE, MUTATION_EXTENT_VERTEX, MUTATION_EXTENT_COLOUR, inputImage
                             );
-                            PolygonReplacementMutation replacementMutation = new PolygonReplacementMutation(
-                                    MUTATION_RATE, MIN_ALPHA, MAX_ALPHA, inputImage
-                            );
+//                            PolygonReplacementMutation replacementMutation = new PolygonReplacementMutation(
+//                                    MUTATION_RATE, MIN_ALPHA, MAX_ALPHA, inputImage
+//                            );
+                            LocalSearchMutation replacementMutation = new LocalSearchMutation(
+                                    MUTATION_RATE, MIN_ALPHA, MAX_ALPHA,
+                                    inputImage, imageFitness, polygonsToImageDecoder, POLYGON_VERTICES);
                             Optional<Individual<List<Polygon>, BufferedImage>> individual1 =
                                     deltaMutation.mutation(individual);
                             return replacementMutation.mutation(individual1.orElseThrow(
@@ -130,7 +133,7 @@ public class Main {
             super(epoch, execution, countOfFitnessEvaluations, bestIndividual, population);
             this.outputDir = outputDir;
             // render partial solutions
-            if (epoch % RENDER_FREQUENCY == 0 || epoch == GENERATION_COUNT) {
+            if (epoch % RENDER_FREQUENCY == 0 || epoch == GENERATION_COUNT || epoch < 100) {
                 Individual<List<Polygon>, BufferedImage> alphaIndividual = bestIndividual.getIndividual();
                 String fileName = String.format("%s/%s_%d.%s", outputDir, FILE_PREFIX, epoch, FORMAT);
                 renderSolution(alphaIndividual.decode(decodingStrategy), fileName);
