@@ -118,7 +118,6 @@ public class Main {
 
         private static final String FORMAT = "jpeg";
         private static final String FILE_PREFIX = "generation";
-        private final String outputDir;
         private static double bestFitness = Integer.MIN_VALUE;
 
         public ImageStatisticsPerEpoch(
@@ -131,9 +130,8 @@ public class Main {
                 String outputDir
         ) {
             super(epoch, execution, countOfFitnessEvaluations, bestIndividual, population);
-            this.outputDir = outputDir;
             // render partial solutions
-            if (epoch % RENDER_FREQUENCY == 0 || epoch == GENERATION_COUNT || epoch < 100) {
+            if (epoch % RENDER_FREQUENCY == 0 || epoch == GENERATION_COUNT/* || epoch < 100*/) {
                 Individual<List<Polygon>, BufferedImage> alphaIndividual = bestIndividual.getIndividual();
                 String fileName = String.format("%s/%s_%d.%s", outputDir, FILE_PREFIX, epoch, FORMAT);
                 renderSolution(alphaIndividual.decode(decodingStrategy), fileName);
@@ -147,7 +145,7 @@ public class Main {
 
         @Override
         public String getSummary() {
-            return "Epoch " + epoch +
+            String s = "Epoch " + epoch +
                     ", avg. fitness: " + population.stream()
                     .mapToDouble(IndividualWithAssignedFitness::getFitness)
                     .average()
@@ -155,6 +153,8 @@ public class Main {
                     ", #fitness evaluations: " + countOfFitnessEvaluations +
                     ", execution time:" + execution + " ms" +
                     ", best fitness: " + bestIndividual.getFitness().toString();
+            destructor();
+            return s;
         }
 
         private void renderSolution(BufferedImage bufferedImage, String fileName) {
@@ -164,6 +164,10 @@ public class Main {
                 System.err.println("Unable to write rendered solution to file");
                 e.printStackTrace();
             }
+        }
+
+        private void destructor() {
+            this.population = null;
         }
     }
 }

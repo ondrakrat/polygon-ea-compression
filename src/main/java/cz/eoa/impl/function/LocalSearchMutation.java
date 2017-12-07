@@ -49,6 +49,9 @@ public class LocalSearchMutation implements MutationStrategy<List<Polygon>, Buff
     @Override
     public Optional<Individual<List<Polygon>, BufferedImage>> mutation(Individual<List<Polygon>, BufferedImage> individual) {
         List<Polygon> polygons = individual.getGenes();
+        if (RANDOM.nextDouble() > mutationRate) {
+            return Optional.of(new ImageIndividual(polygons));
+        }
         List<Polygon> mutatedPolygons = polygons.stream()
                 .map(Polygon::new)
                 .collect(Collectors.toList());
@@ -57,7 +60,8 @@ public class LocalSearchMutation implements MutationStrategy<List<Polygon>, Buff
     }
 
     private void mutatePolygon(List<Polygon> polygons) {
-        int index = RANDOM.nextInt(0, polygons.size()); // TODO pick with tournament selection
+//        int index = RANDOM.nextInt(0, polygons.size());
+        int index = tournamentSelectionWorstPolygon(polygons);
         int[] worstSegment = fitnessFunction.getWorstSegment(decoder.decode(polygons));
         int xMin = worstSegment[1];
         int xMax = xMin + worstSegment[3];
@@ -79,5 +83,22 @@ public class LocalSearchMutation implements MutationStrategy<List<Polygon>, Buff
         float alpha = RANDOM.nextFloat() * (maxAlpha - minAlpha) + minAlpha;
         Polygon polygon = new Polygon(points, new Color(r / 255.0f, g / 255.0f, b / 255.0f, alpha));
         polygons.set(index, polygon);
+    }
+
+    private int tournamentSelectionWorstPolygon(List<Polygon> polygons) {
+        double worstFitness = -Double.MAX_VALUE;
+        int worstIndex = -1;
+        for (int i = 0; i < TOURNAMENT_SIZE; ++i) {
+            int index = RANDOM.nextInt(0, polygons.size());
+            List<Polygon> polygonsWithoutSelected = polygons.stream()
+                    .filter(polygon -> !polygons.get(index).equals(polygon))
+                    .collect(Collectors.toList());
+            Double fitness = fitnessFunction.computeFitnessForIndividual(decoder.decode(polygonsWithoutSelected));
+            if (fitness > worstFitness) {
+                worstFitness = fitness;
+                worstIndex = index;
+            }
+        }
+        return worstIndex;
     }
 }
