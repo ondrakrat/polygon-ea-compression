@@ -144,7 +144,7 @@ public class Main {
 
         @Override
         public String getSummary() {
-            return "Epoch " + epoch +
+            String s = "Epoch " + epoch +
                     ", avg. fitness: " + population.stream()
                     .mapToDouble(IndividualWithAssignedFitness::getFitness)
                     .average()
@@ -152,6 +152,8 @@ public class Main {
                     ", #fitness evaluations: " + countOfFitnessEvaluations +
                     ", execution time:" + execution + " ms" +
                     ", best fitness: " + bestIndividual.getFitness().toString();
+            this.population = null;
+            return s;
         }
 
         private void renderSolution(BufferedImage bufferedImage, String fileName) {

@@ -13,7 +13,7 @@ public class StatisticsPerEpoch<V, T, K extends Comparable<K>> {
     protected final long execution;
     protected final int countOfFitnessEvaluations;
     protected final IndividualWithAssignedFitness<V, T, K> bestIndividual;
-    protected final List<IndividualWithAssignedFitness<V, T, K>> population;
+    protected List<IndividualWithAssignedFitness<V, T, K>> population;
 
     public String getSummary() {
         return "Epoch " + epoch +
