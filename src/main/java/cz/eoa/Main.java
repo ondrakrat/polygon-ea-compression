@@ -15,10 +15,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class Main {
 
+    public static final String LOG_FILE_NAME = "ea.log";
     // parameters + configuration
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static final int POLYGON_COUNT = 100;
@@ -40,6 +43,9 @@ public class Main {
             System.err.println("Please specify input and output file names");
             System.exit(1);
         }
+        FileHandler fileHandler = new FileHandler(LOG_FILE_NAME);
+        fileHandler.setFormatter(new SimpleFormatter());
+        LOG.addHandler(fileHandler);
         // read the image
         String inputFileName = args[0];
         String outputDirName = args[1];
