@@ -9,11 +9,16 @@ import cz.eoa.templates.operations.IndividualFitnessUpdater;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static cz.eoa.Main.LOG_FILE_NAME;
 
 public class EvolutionExecutor<V, T, K extends Comparable<K>, L extends StatisticsPerEpoch<V, T, K>> {
     private final EvolutionConfiguration<V, T, K, L> configuration;
@@ -22,6 +27,13 @@ public class EvolutionExecutor<V, T, K extends Comparable<K>, L extends Statisti
 
     public EvolutionExecutor(EvolutionConfiguration<V, T, K, L> configuration) {
         this.configuration = configuration;
+        try {
+            FileHandler fileHandler = new FileHandler(LOG_FILE_NAME);
+            fileHandler.setFormatter(new SimpleFormatter());
+            logger.addHandler(fileHandler);
+        } catch (IOException e) {
+            System.err.println("Cannot create log FileHandler to file " + LOG_FILE_NAME);
+        }
     }
 
     public List<L> run() {

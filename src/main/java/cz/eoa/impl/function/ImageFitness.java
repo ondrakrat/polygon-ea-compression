@@ -60,7 +60,7 @@ public class ImageFitness implements FitnessAssessmentStrategy<BufferedImage, Do
         double fitness = 0;
         for (int i = 0; i < inputImage.getWidth(); ++i) {
             for (int j = 0; j < inputImage.getHeight(); ++j) {
-                fitness += pixelDiffFast(i, j, solutionData);
+                fitness += Math.sqrt(pixelDiffFast(i, j, solutionData));
             }
         }
         return fitness * -1;
